@@ -1,3 +1,27 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2017 Jan Heinrich Reimer
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 package com.heinrichreimersoftware.materialintro.slide;
 
 import android.content.Context;
@@ -103,7 +127,40 @@ public class FragmentSlide implements Slide, RestorableSlide, ButtonCtaSlide {
         return buttonCtaLabelRes;
     }
 
-    public static class Builder{
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        FragmentSlide that = (FragmentSlide) o;
+
+        if (background != that.background) return false;
+        if (backgroundDark != that.backgroundDark) return false;
+        if (canGoForward != that.canGoForward) return false;
+        if (canGoBackward != that.canGoBackward) return false;
+        if (buttonCtaLabelRes != that.buttonCtaLabelRes) return false;
+        if (fragment != null ? !fragment.equals(that.fragment) : that.fragment != null)
+            return false;
+        if (buttonCtaLabel != null ? !buttonCtaLabel.equals(that.buttonCtaLabel) : that.buttonCtaLabel != null)
+            return false;
+        return buttonCtaClickListener != null ? buttonCtaClickListener.equals(that.buttonCtaClickListener) : that.buttonCtaClickListener == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = fragment != null ? fragment.hashCode() : 0;
+        result = 31 * result + background;
+        result = 31 * result + backgroundDark;
+        result = 31 * result + (canGoForward ? 1 : 0);
+        result = 31 * result + (canGoBackward ? 1 : 0);
+        result = 31 * result + (buttonCtaLabel != null ? buttonCtaLabel.hashCode() : 0);
+        result = 31 * result + buttonCtaLabelRes;
+        result = 31 * result + (buttonCtaClickListener != null ? buttonCtaClickListener.hashCode() : 0);
+        return result;
+    }
+
+    public static class Builder {
         private Fragment fragment;
         @ColorRes
         private int background;
@@ -160,8 +217,7 @@ public class FragmentSlide implements Slide, RestorableSlide, ButtonCtaSlide {
         public Builder buttonCtaLabelHtml(String buttonCtaLabelHtml) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 this.buttonCtaLabel = Html.fromHtml(buttonCtaLabelHtml, Html.FROM_HTML_MODE_LEGACY);
-            }
-            else {
+            } else {
                 //noinspection deprecation
                 this.buttonCtaLabel = Html.fromHtml(buttonCtaLabelHtml);
             }
@@ -180,8 +236,8 @@ public class FragmentSlide implements Slide, RestorableSlide, ButtonCtaSlide {
             return this;
         }
 
-        public FragmentSlide build(){
-            if(background == 0 || fragment == null)
+        public FragmentSlide build() {
+            if (background == 0 || fragment == null)
                 throw new IllegalArgumentException("You must set at least a fragment and background.");
             return new FragmentSlide(this);
         }
@@ -197,13 +253,12 @@ public class FragmentSlide implements Slide, RestorableSlide, ButtonCtaSlide {
         }
 
         public static FragmentSlideFragment newInstance(@LayoutRes int layoutRes, @StyleRes int themeRes) {
-            FragmentSlideFragment fragment = new FragmentSlideFragment();
-
             Bundle arguments = new Bundle();
             arguments.putInt(ARGUMENT_LAYOUT_RES, layoutRes);
             arguments.putInt(ARGUMENT_THEME_RES, themeRes);
-            fragment.setArguments(arguments);
 
+            FragmentSlideFragment fragment = new FragmentSlideFragment();
+            fragment.setArguments(arguments);
             return fragment;
         }
 
