@@ -1,0 +1,92 @@
+name: CI
+
+on: push
+
+jobs:
+  gradle-build:
+    name: 🏗️ Gradle build
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Check-out
+        uses: actions/checkout@v4
+      - name: 🧰 Install JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: 17
+          distribution: temurin
+          cache: gradle
+      - name: 🏗️ Build with Gradle
+        run: ./gradlew build
+  gradle-lint:
+    name: 🧪 Gradle LINT
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Check-out
+        uses: actions/checkout@v4
+      - name: 🧰 Install JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: 17
+          distribution: temurin
+          cache: gradle
+      - name: 🧪 Lint with Gradle
+        run: ./gradlew lint
+  gradle-test:
+    name: 🧪 Gradle test
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Check-out
+        uses: actions/checkout@v4
+      - name: 🧰 Install JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: 17
+          distribution: temurin
+          cache: gradle
+      - name: 🧪 Test with Gradle
+        run: ./gradlew test
+  gradle-integration-test:
+    name: 🧪 Gradle integration test
+    runs-on: macOS-latest
+    steps:
+      - name: 📥 Check-out
+        uses: actions/checkout@v4
+      - name: 🧰 Install JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: 17
+          distribution: temurin
+          cache: gradle
+      - name: 🧰 Install Android SDK
+        uses: malinskiy/action-android/install-sdk@release/0.1.6
+        with:
+          acceptLicense: yes
+      - name: 🧪 Integration test
+        uses: malinskiy/action-android/emulator-run-cmd@release/0.1.6
+        with:
+          cmd: ./gradlew connectedAndroidTest
+          api: 25
+          tag: google_apis
+          abi: x86
+  github-release:
+    name: 🚀 Create GitHub release
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
+    needs:
+      - gradle-build
+      - gradle-lint
+      - gradle-test
+      - gradle-integration-test
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Check-out
+        uses: actions/checkout@v4
+      - name: 🚀 Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: Release ${{ github.ref_name }}
+          fail_on_unmatched_files: true
+          draft: false
+          prerelease: false
+          generate_release_notes: true

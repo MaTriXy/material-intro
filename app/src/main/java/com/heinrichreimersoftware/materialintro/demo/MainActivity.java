@@ -25,10 +25,10 @@
 package com.heinrichreimersoftware.materialintro.demo;
 
 import android.content.Intent;
-import android.databinding.DataBindingUtil;
+import androidx.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -96,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.menu_item_github) {
             Intent intent = new Intent(Intent.ACTION_VIEW,
-                    Uri.parse("https://github.com/HeinrichReimer/material-intro"));
+                    Uri.parse("https://github.com/janheinrichmerker/material-intro"));
             startActivity(intent);
             return true;
         }

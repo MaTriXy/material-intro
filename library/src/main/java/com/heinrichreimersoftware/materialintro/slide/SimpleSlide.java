@@ -28,17 +28,17 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.ColorInt;
-import android.support.annotation.ColorRes;
-import android.support.annotation.DrawableRes;
-import android.support.annotation.LayoutRes;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.StringRes;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.graphics.ColorUtils;
+import androidx.annotation.ColorInt;
+import androidx.annotation.ColorRes;
+import androidx.annotation.DrawableRes;
+import androidx.annotation.LayoutRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
+import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.Fragment;
+import androidx.core.content.ContextCompat;
+import androidx.core.graphics.ColorUtils;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -486,9 +486,9 @@ public class SimpleSlide implements Slide, RestorableSlide, ButtonCtaSlide {
             View fragment = inflater.inflate(arguments.getInt(ARGUMENT_LAYOUT_RES,
                     R.layout.mi_fragment_simple_slide), container, false);
 
-            titleView = (TextView) fragment.findViewById(R.id.mi_title);
-            descriptionView = (TextView) fragment.findViewById(R.id.mi_description);
-            imageView = (ImageView) fragment.findViewById(R.id.mi_image);
+            titleView = fragment.findViewById(R.id.mi_title);
+            descriptionView = fragment.findViewById(R.id.mi_description);
+            imageView = fragment.findViewById(R.id.mi_image);
 
             long id = arguments.getLong(ARGUMENT_ID);
             CharSequence title = arguments.getCharSequence(ARGUMENT_TITLE);
@@ -527,7 +527,11 @@ public class SimpleSlide implements Slide, RestorableSlide, ButtonCtaSlide {
             //Image
             if (imageView != null) {
                 if (imageRes != 0) {
-                    imageView.setImageResource(imageRes);
+                    try {
+                        imageView.setImageResource(imageRes);
+                    } catch (OutOfMemoryError oome) {
+                        imageView.setVisibility(View.GONE);
+                    }
                     imageView.setVisibility(View.VISIBLE);
                 } else {
                     imageView.setVisibility(View.GONE);
@@ -588,8 +592,8 @@ public class SimpleSlide implements Slide, RestorableSlide, ButtonCtaSlide {
             return imageView;
         }
 
-        public int getSlideId() {
-            return getArguments().getInt(ARGUMENT_ID);
+        public long getSlideId() {
+            return getArguments().getLong(ARGUMENT_ID);
         }
 
         @Override
